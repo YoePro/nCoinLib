@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>e397275c-e4f3-4107-8817-8288c50335df</ProjectGuid>
+    <ProjectGuid>{E397275C-E4F3-4107-8817-8288C50335DF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>nCoinLib</RootNamespace>
@@ -30,20 +30,45 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net35\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockChain\Block.cs" />
+    <Compile Include="BlockChain\BlockHeader.cs" />
+    <Compile Include="BlockChain\CoinAddress.cs" />
+    <Compile Include="BlockChain\MerkleBlock.cs" />
+    <Compile Include="BlockChain\Transaction.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Coin\Consensus.cs" />
+    <Compile Include="Interfaces\ICoinSerializable.cs" />
+    <Compile Include="Util\Encoders\ASCIIEncoder.cs" />
+    <Compile Include="Util\Encoders\Base64Encoder.cs" />
+    <Compile Include="Util\Encoders\DataEncoders.cs" />
+    <Compile Include="Util\Encoders\HexEncoder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RPC\Exceptions.cs" />
+    <Compile Include="RPC\Request.cs" />
+    <Compile Include="RPC\Response.cs" />
+    <Compile Include="RPC\RPCMethods.cs" />
+    <Compile Include="Util\Math\Algorithm\Scrypt.cs" />
+    <Compile Include="Util\Streams\CoinStream.cs" />
+    <Compile Include="Util\Types\BigInteger.cs" />
+    <Compile Include="Util\Types\UInt256.cs" />
+    <Compile Include="Util\UnixDateTime.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Network\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>
