@@ -78,6 +78,85 @@ namespace nCoinLib.Util.Types
             pn7 = b.pn7;
         }
 
+        public UInt256(ulong b)
+        {
+            pn0 = (uint)b;
+            pn1 = (uint)(b >> 32);
+            pn2 = 0;
+            pn3 = 0;
+            pn4 = 0;
+            pn5 = 0;
+            pn6 = 0;
+            pn7 = 0;
+        }
+
+        public UInt256(int b)
+        {
+            pn0 = (uint)b;
+            pn1 = (uint)(b >> 32);
+            pn2 = 0;
+            pn3 = 0;
+            pn4 = 0;
+            pn5 = 0;
+            pn6 = 0;
+            pn7 = 0;
+        }
+
+        public UInt256(byte[] vch, bool lendian = true)
+        {
+            if (vch.Length != WIDTH_BYTE)
+            {
+                throw new FormatException("the byte array should be 256 byte long");
+            }
+
+            if (!lendian)
+                vch = vch.Reverse().ToArray();
+
+            pn0 = Utils.ToUInt32(vch, 4 * 0, true);
+            pn1 = Utils.ToUInt32(vch, 4 * 1, true);
+            pn2 = Utils.ToUInt32(vch, 4 * 2, true);
+            pn3 = Utils.ToUInt32(vch, 4 * 3, true);
+            pn4 = Utils.ToUInt32(vch, 4 * 4, true);
+            pn5 = Utils.ToUInt32(vch, 4 * 5, true);
+            pn6 = Utils.ToUInt32(vch, 4 * 6, true);
+            pn7 = Utils.ToUInt32(vch, 4 * 7, true);
+
+        }
+
+        public UInt256(string str)
+        {
+            pn0 = 0;
+            pn1 = 0;
+            pn2 = 0;
+            pn3 = 0;
+            pn4 = 0;
+            pn5 = 0;
+            pn6 = 0;
+            pn7 = 0;
+            str = str.Trim();
+
+            if (str.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                str = str.Substring(2);
+
+            var bytes = Encoder.DecodeData(str).Reverse().ToArray();
+            if (bytes.Length != WIDTH_BYTE)
+                throw new FormatException("Invalid hex length");
+            pn0 = Utils.ToUInt32(bytes, 4 * 0, true);
+            pn1 = Utils.ToUInt32(bytes, 4 * 1, true);
+            pn2 = Utils.ToUInt32(bytes, 4 * 2, true);
+            pn3 = Utils.ToUInt32(bytes, 4 * 3, true);
+            pn4 = Utils.ToUInt32(bytes, 4 * 4, true);
+            pn5 = Utils.ToUInt32(bytes, 4 * 5, true);
+            pn6 = Utils.ToUInt32(bytes, 4 * 6, true);
+            pn7 = Utils.ToUInt32(bytes, 4 * 7, true);
+
+        }
+
+        public UInt256(byte[] vch)
+            : this(vch, true)
+        {
+        }
+
         public static UInt256 Parse(string hex)
         {
             return new UInt256(hex);
@@ -151,72 +230,10 @@ namespace nCoinLib.Util.Types
             return Encoder.EncodeData(ToBytes().Reverse().ToArray());
         }
 
-        public UInt256(ulong b)
-        {
-            pn0 = (uint)b;
-            pn1 = (uint)(b >> 32);
-            pn2 = 0;
-            pn3 = 0;
-            pn4 = 0;
-            pn5 = 0;
-            pn6 = 0;
-            pn7 = 0;
-        }
 
-        public UInt256(byte[] vch, bool lendian = true)
-        {
-            if (vch.Length != WIDTH_BYTE)
-            {
-                throw new FormatException("the byte array should be 256 byte long");
-            }
 
-            if (!lendian)
-                vch = vch.Reverse().ToArray();
+         
 
-            pn0 = Utils.ToUInt32(vch, 4 * 0, true);
-            pn1 = Utils.ToUInt32(vch, 4 * 1, true);
-            pn2 = Utils.ToUInt32(vch, 4 * 2, true);
-            pn3 = Utils.ToUInt32(vch, 4 * 3, true);
-            pn4 = Utils.ToUInt32(vch, 4 * 4, true);
-            pn5 = Utils.ToUInt32(vch, 4 * 5, true);
-            pn6 = Utils.ToUInt32(vch, 4 * 6, true);
-            pn7 = Utils.ToUInt32(vch, 4 * 7, true);
-
-        }
-
-        public UInt256(string str)
-        {
-            pn0 = 0;
-            pn1 = 0;
-            pn2 = 0;
-            pn3 = 0;
-            pn4 = 0;
-            pn5 = 0;
-            pn6 = 0;
-            pn7 = 0;
-            str = str.Trim();
-
-            if (str.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-                str = str.Substring(2);
-
-            var bytes = Encoder.DecodeData(str).Reverse().ToArray();
-            if (bytes.Length != WIDTH_BYTE)
-                throw new FormatException("Invalid hex length");
-            pn0 = Utils.ToUInt32(bytes, 4 * 0, true);
-            pn1 = Utils.ToUInt32(bytes, 4 * 1, true);
-            pn2 = Utils.ToUInt32(bytes, 4 * 2, true);
-            pn3 = Utils.ToUInt32(bytes, 4 * 3, true);
-            pn4 = Utils.ToUInt32(bytes, 4 * 4, true);
-            pn5 = Utils.ToUInt32(bytes, 4 * 5, true);
-            pn6 = Utils.ToUInt32(bytes, 4 * 6, true);
-            pn7 = Utils.ToUInt32(bytes, 4 * 7, true);
-
-        }
-
-        public UInt256(byte[] vch)
-            : this(vch, true)
-        {
-        }
 
         public override bool Equals(object obj)
         {
@@ -311,10 +328,21 @@ namespace nCoinLib.Util.Types
             return (a == new UInt256(b));
         }
 
+        public static bool operator ==(UInt256 a, int b)
+        {
+            return (a == new UInt256(b));
+        }
+
         public static bool operator !=(UInt256 a, ulong b)
         {
             return !(a == new UInt256(b));
         }
+
+        public static bool operator !=(UInt256 a, int b)
+        {
+            return !(a == new UInt256(b));
+        }
+
 
         public static implicit operator UInt256(ulong value)
         {

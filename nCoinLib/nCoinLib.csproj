@@ -59,6 +59,7 @@
     <Compile Include="RPC\Response.cs" />
     <Compile Include="RPC\RPCMethods.cs" />
     <Compile Include="Util\Math\Algorithm\Scrypt.cs" />
+    <Compile Include="Util\MerkleUtil.cs" />
     <Compile Include="Util\Streams\CoinStream.cs" />
     <Compile Include="Util\Types\BigInteger.cs" />
     <Compile Include="Util\Types\UInt256.cs" />

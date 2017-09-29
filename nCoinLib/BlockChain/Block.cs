@@ -17,7 +17,7 @@ namespace nCoinLib.BlockChain
     public class Block
     {
         private BlockHeader blockHeader = new BlockHeader();
-        private List<Transaction> txList = new List<Transaction>();
+        private List<Transaction> vtx = new List<Transaction>();
 
         // TODO: Update code and remove this
         public const uint MAX_BLOCK_SIZE = Coin.Consensus.MAX_BLOCK_SIZE;
@@ -59,7 +59,7 @@ namespace nCoinLib.BlockChain
         {
             ClearBlock();
             this.blockHeader = BlockHeader;
-            this.txList = transactionsList;
+            this.vtx = transactionsList;
         }
 
         #endregion
@@ -70,15 +70,15 @@ namespace nCoinLib.BlockChain
 
         public List<Transaction> Transactions
         {
-            get { return txList; }
-            set { txList = value; }
+            get { return vtx; }
+            set { vtx = value; }
         }
 
         public UInt256 BlockHash { get { return blockHeader.Hash; } }
 
         public MerkleNode MerkleRoot { get { return MerkleNode.GetRoot(Transactions.Select(t => t.GetHash())); } }
 
-        public bool HeaderOnly { get { return (txList == null || txList.Count == 0) ? true : false; } }
+        public bool HeaderOnly { get { return (vtx == null || vtx.Count == 0) ? true : false; } }
 
         #endregion
 
@@ -90,7 +90,7 @@ namespace nCoinLib.BlockChain
         public void ReadWrite(CoinStream stream)
         {
             stream.ReadWrite(ref blockHeader);
-            stream.ReadWrite(ref txList);
+            stream.ReadWrite(ref vtx);
         }
         public void ReadWrite(byte[] byteArray, int startIndex)
         {
@@ -107,7 +107,7 @@ namespace nCoinLib.BlockChain
         void ClearBlock()
         {
             blockHeader.Clear();
-            txList.Clear();
+            vtx.Clear();
         }
 
 
