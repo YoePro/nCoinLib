@@ -52,11 +52,11 @@ namespace nCoinLib.Util
         /* This implements a constant-space merkle root/path calculator, limited to 2^32 leaves. */
         public List<UInt256> Leaves { get; set; }
         public UInt256 pRoot { get; set; }
-        public int branchPos { get; set; }
+        public UInt32 branchPos { get; set; }
         public bool pMutated { get; set; }
         public List<UInt256> pBranch { get; set; }
 
-        MerkleUtil(List<UInt256> Leaves, UInt256 PRoot, bool PMutated, int BranchPos, List<UInt256> PBranch)
+        MerkleUtil(List<UInt256> Leaves, UInt256 PRoot, bool PMutated, UInt32 BranchPos, List<UInt256> PBranch)
         {
             this.Leaves = Leaves;
             this.pRoot = PRoot;
@@ -208,7 +208,7 @@ namespace nCoinLib.Util
             Leaves = leaves;
             pRoot = new UInt256();
             pMutated = mutated;
-            branchPos = -1;
+            branchPos = 0xFFFFFFFF;
             pBranch = null;
 
             //MerkleComputation(leaves, &hash, mutated, -1, nullptr);
@@ -216,7 +216,7 @@ namespace nCoinLib.Util
             return pRoot;
         }
 
-        List<UInt256> ComputeMerkleBranch(List<UInt256> leaves, int position)
+        List<UInt256> ComputeMerkleBranch(List<UInt256> leaves, UInt32 position)
         {
             Leaves = leaves;
             branchPos = position;
@@ -230,7 +230,7 @@ namespace nCoinLib.Util
             return pBranch;
         }
 
-        UInt256 ComputeMerkleRootFromBranch(UInt256& leaf, List<UInt256>& vMerkleBranch, uint32_t nIndex)
+        UInt256 ComputeMerkleRootFromBranch(UInt256 leaf, List<UInt256> vMerkleBranch, UInt32 nIndex)
         {
             UInt256 hash = leaf;
             for (List<UInt256>::const_iterator it = vMerkleBranch.begin(); it != vMerkleBranch.end(); ++it)
@@ -253,7 +253,7 @@ namespace nCoinLib.Util
             Leaves = new List<UInt256>();
             pRoot = new UInt256();
             pMutated = mutated;
-            branchPos = -1;
+            branchPos = 0xFFFFFFFF;
             pBranch = null;
 
             // Block.vtx.Count
@@ -261,7 +261,7 @@ namespace nCoinLib.Util
 
             for (int s = 0; s < _block.Transactions.Count(); s++)
             {
-                Leaves[s] = _block.Transactions[s].GetHashCode();
+                Leaves[s] = _block.Transactions[s].GetHash();
             }
 
             //return ComputeMerkleRoot(Leaves, mutated);
@@ -269,31 +269,37 @@ namespace nCoinLib.Util
             return pRoot;
         }
 
-        UInt256 BlockWitnessMerkleRoot(Block _block, bool mutated)
+        UInt256 BlockWitnessMerkleRoot(ref Block _block, bool mutated)
         {
             Leaves = new List<UInt256>();
-            //leaves.resize(block.vtx.size());
+            // leaves.resize(block.vtx.size());
 
             Leaves[0] = UInt256.Zero; // The witness hash of the coinbase is 0.
 
             for (int s = 1; s < _block.Transactions.Count(); s++)
             {
-                Leaves[s] = _block.vtx[s]->GetWitnessHash();
+                Leaves[s] = _block.Transactions[s].GetWitnessHash();
             }
 
-            //return ComputeMerkleRoot(leaves, mutated);
-            return ComputeMerkleRoot
+            // return ComputeMerkleRoot(Leaves, mutated);
+            MerkleComputation();
+            return pRoot;
+  
         }
 
-        List<UInt256> BlockMerkleBranch(CBlock& block, uint position)
+        List<UInt256> BlockMerkleBranch(ref Block _block, int position)
         {
-            List<UInt256> leaves;
-            leaves.resize(block.vtx.size());
-            for (size_t s = 0; s < block.vtx.size(); s++)
-            {
-                leaves[s] = block.vtx[s]->GetHash();
+            Leaves = new List<UInt256>(); // This may be right but needs to be checked.
+            // leaves.resize(block.vtx.size());
+            
+            for (int s = 0; s < _block.Transactions.Count(); s++) {
+                Leaves.Add(_block.Transactions[s].GetHash());
             }
-            return ComputeMerkleBranch(leaves, position);
+            
+            //return ComputeMerkleBranch(leaves, position);
+            MerkleComputation();
+            return pBranch;
+
         }
 
     }

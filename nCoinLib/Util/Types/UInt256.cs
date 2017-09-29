@@ -231,10 +231,6 @@ namespace nCoinLib.Util.Types
         }
 
 
-
-         
-
-
         public override bool Equals(object obj)
         {
             var item = obj as UInt256;
@@ -322,7 +318,6 @@ namespace nCoinLib.Util.Types
             return !(a == b);
         }
 
-
         public static bool operator ==(UInt256 a, ulong b)
         {
             return (a == new UInt256(b));
@@ -387,7 +382,12 @@ namespace nCoinLib.Util.Types
             return 0;
         }
 
-                public byte[] ToBytes(bool lendian = true)
+        public int Compare(UInt256 b)
+        {
+            return Comparison(this, b);
+        }
+
+        public byte[] ToBytes(bool lendian = true)
         {
             var arr = new byte[WIDTH_BYTE];
             Buffer.BlockCopy(Utils.ToBytes(pn0, true), 0, arr, 4 * 0, 4);
@@ -402,6 +402,8 @@ namespace nCoinLib.Util.Types
                 Array.Reverse(arr);
             return arr;
         }
+
+
 
         public MutableUInt256 AsBitcoinSerializable()
         {
