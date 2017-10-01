@@ -7,18 +7,19 @@ namespace nCoinLib.BlockChain
     {
         public UInt256 hash;
         UInt32 n;
-        private UInt256 hashPrevTx;
-        private uint nOut;
 
-        public COutPoint(UInt256 hashPrevTx, uint nOut)
+        public COutPoint(UInt256 hashIn, UInt32 nIn)
         {
-            this.hashPrevTx = hashPrevTx;
-            this.nOut = nOut;
+            this.hash = hashIn;
+            this.n = nIn;
+        }
+
+        public COutPoint()
+        {
+            SetNull();
         }
 
         //TODO: Finish COutPoint
-        //    COutPoint() : n((uint32_t) -1) { }
-        //    COutPoint(const uint256& hashIn, uint32_t nIn): hash(hashIn), n(nIn) { }
 
         //    ADD_SERIALIZE_METHODS;
 
@@ -68,6 +69,14 @@ namespace nCoinLib.BlockChain
         }
 
         #endregion
+
+        public override int GetHashCode()
+        {
+            int nhash = 13;
+            nhash = (nhash * 7) + hash.GetHashCode();
+            nhash = (nhash * 7) + n.GetHashCode();
+            return nhash;
+        }
 
         public override bool Equals(object obj)
         {

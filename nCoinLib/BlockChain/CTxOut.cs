@@ -10,6 +10,8 @@ namespace nCoinLib.BlockChain
         public CAmount nValue;
         public CScript scriptPubKey;
 
+        
+
         CTxOut()
         {
             SetNull();

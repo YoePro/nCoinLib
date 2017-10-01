@@ -225,7 +225,7 @@ namespace nCoinLib.BlockChain
         {
             Block block = new Block();
             block.Header.Nonce = RandomUtils.GetUInt32();
-            block.Header.HashPrevBlock = this.BlockHash;
+            block.Header.PrevBlockHash = this.BlockHash;
             block.Header.BlockTime = now;
             var tx = block.AddTransaction(new Transaction());
             tx.AddInput(new TxIn()
@@ -246,11 +246,11 @@ namespace nCoinLib.BlockChain
             var block = JObject.Parse(json);
             var txs = (JArray)block["tx"];
             Block blk = new Block();
-            blk.Header.Bits = new Target((uint)block["bits"]);
+            blk.Header.Bits = new Objective((uint)block["bits"]);
             blk.Header.BlockTime = Utils.UnixTimeToDateTime((uint)block["time"]);
             blk.Header.Nonce = (uint)block["nonce"];
             blk.Header.Version = (int)block["ver"];
-            blk.Header.HashPrevBlock = UInt256.Parse((string)block["prev_block"]);
+            blk.Header.PrevBlockHash = UInt256.Parse((string)block["prev_block"]);
             blk.Header.HashMerkleRoot = UInt256.Parse((string)block["mrkl_root"]);
             foreach (var tx in txs)
             {

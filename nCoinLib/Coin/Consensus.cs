@@ -54,5 +54,11 @@ namespace nCoinLib.Coin
         // Maximal block size
         public const uint MAX_BLOCK_SIZE = 1000 * 1000;
 
+        // Blockheader magic main net
+        public const UInt32 MAGIC_MAIN = 0x0CAFFE01;
+
+        // Blockheader magic testnet
+        public const UInt32 MAGIC_TESTNET = 0x0CAFFE11;
+
     }
 }

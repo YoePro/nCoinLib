@@ -2,21 +2,54 @@
 using nCoinLib.Util.Encoders;
 using nCoinLib.Util;
 using nCoinLib.Util.Types;
+using nCoinLib.Util.Streams;
 
 /// <summary>
 /// Header of the block including signatures
 /// </summary>
+
+// Messageheader struct is according to the following    
+// FIELD            BYTES  TYPE         DESCRIPTION
+// --------------------------------------------------------------------
+// MAGIC            4      uint32       Magic value indicating message origin network, and used to seek to next message when stream state is unknown
+//                                      Defined in Coin.Consensus.MAGIC_MAIN or MAGIC_TESTNET
+// COMMAND          12     char[12]     ASCII string identifying the packet content, NULL padded (non-NULL padding results in packet rejected)
+// LENGTH           4      uint32       Length of payload in number of bytes
+// CHECKUM          4      uint32       First 4 bytes of the Payload hash
+// Payload
+// ---
+// Total length in bytes is 24 + Payload
+
+
+// Blockheaders struct according to the following
+// FIELD            BYTES  TYPE         DESCRIPTION
+// --------------------------------------------------------------------
+// VERSION          4      uint32       Block version information (note, this is signed)
+// PREV_BLOCK_HASH  32     uint256      The hash value of the previous block this particular block references
+// MERKLE_ROOT      32     uint256      The reference to a Merkle tree collection which is a hash of all transactions related to this block
+// TIMESTAMP        4      uint32       A timestamp recording when this block was created (Will overflow in 2106)
+// DIFF_BITS        4      uint32       The calculated difficulty target being used for this block
+// NONCE            4      uint32       The nonce used to generate this block… to allow variations of the header and compute different hashes
+// TXN_COUNT        1      var_int      Number of transaction entries, this value is always 0
+
+
+
 namespace nCoinLib.BlockChain
 {
     public class BlockHeader
     {
         internal const int Size = 80;
         
+
+
+
         UInt256 hashMerkleRoot;
+        UInt256 prevBlockHash;
         UInt256[] _Hashes;
         static BigInteger Pow256 = BigInteger.ValueOf(2).Pow(256);
         const int CURRENT_VERSION = 3;
-
+        int nVersion;
+        uint nNonce;
         uint nTime;
         uint nBits;
 
@@ -43,7 +76,6 @@ namespace nCoinLib.BlockChain
         #region Fields
         public UInt256 Hash { get { return GetHash(); } }
         
-        UInt256 prevBlockHash;
         public UInt256 PrevBlockHash
         {
             get
@@ -56,7 +88,7 @@ namespace nCoinLib.BlockChain
             }
         }
 
-        public Target Bits
+        public Objective Bits
         {
             get
             {
@@ -68,7 +100,7 @@ namespace nCoinLib.BlockChain
             }
         }
 
-        int nVersion;
+        
 
         public int Version
         {
@@ -82,9 +114,9 @@ namespace nCoinLib.BlockChain
             }
         }
 
-        uint nNonce;
+        
 
-        public uint Nonce
+        public UInt32 Nonce
         {
             get
             {
@@ -270,12 +302,12 @@ namespace nCoinLib.BlockChain
             UpdateTime(now, network.Consensus, prev);
         }
 
-        public Target GetWorkRequired(Network network, ChainedBlock prev)
+        public Objective GetWorkRequired(Network network, ChainedBlock prev)
         {
             return GetWorkRequired(network.Consensus, prev);
         }
 
-        public Target GetWorkRequired(Consensus consensus, ChainedBlock prev)
+        public Objective GetWorkRequired(Consensus consensus, ChainedBlock prev)
         {
             return new ChainedBlock(this, null, prev).GetWorkRequired(consensus);
         }

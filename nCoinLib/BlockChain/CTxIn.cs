@@ -28,12 +28,12 @@ namespace nCoinLib.BlockChain
         /* Below flags apply in the context of BIP 68*/
         /* If this flag set, CTxIn::nSequence is NOT interpreted as a
          * relative lock-time. */
-        static readonly UInt32 SEQUENCE_LOCKTIME_DISABLE_FLAG = (1 << 31);
+        static readonly UInt32 SEQUENCE_LOCKTIME_DISABLE_FLAG = (1U << 31);
 
         /* If CTxIn::nSequence encodes a relative lock-time and this flag
          * is set, the relative lock-time has units of 512 seconds,
          * otherwise it specifies blocks with a granularity of 1. */
-        static readonly UInt32 SEQUENCE_LOCKTIME_TYPE_FLAG = (1 << 22);
+        static readonly UInt32 SEQUENCE_LOCKTIME_TYPE_FLAG = (1U << 22);
 
         /* If CTxIn::nSequence encodes a relative lock-time, this mask is
          * applied to extract that lock-time from the sequence field. */
@@ -63,6 +63,8 @@ namespace nCoinLib.BlockChain
         //        READWRITE(nSequence);
         //    }
 
+        #region Operators
+
 
         static public bool operator ==(CTxIn a, CTxIn b)
         {
@@ -75,6 +77,10 @@ namespace nCoinLib.BlockChain
         {
             return !(a == b);
         }
+
+
+        #endregion
+
 
         //    explicit CTxIn(COutPoint prevoutIn, CScript scriptSigIn = CScript(), uint32_t nSequenceIn = SEQUENCE_FINAL);
         CTxIn(COutPoint prevoutIn, CScript scriptSigIn, UInt32 nSequenceIn)

@@ -10,6 +10,12 @@ namespace nCoinLib.Util.Streams
 {
 
     // TODO - fix code CoinStream
+    public enum SerializationType
+    {
+        Disk,
+        Network,
+        Hash
+    }
 
     public class CoinStream
     {
@@ -52,7 +58,7 @@ namespace nCoinLib.Util.Streams
 
         #endregion
 
-        #region Fields
+        #region Properties
 
         public int MaxArraySize
         {
@@ -770,41 +776,5 @@ namespace nCoinLib.Util.Streams
 
     }
 
-    public class Scope : IDisposable
-    {
-        Action close;
-        public Scope(Action open, Action close)
-        {
-            this.close = close;
-            open();
-        }
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            close();
-        }
-
-        #endregion
-
-        public static IDisposable Nothing
-        {
-            get
-            {
-                return new Scope(() =>
-                {
-                }, () =>
-                {
-                });
-            }
-        }
-    }
-
-    public enum SerializationType
-    {
-        Disk,
-        Network,
-        Hash
-    }
 }
