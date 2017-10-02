@@ -41,20 +41,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockChain\Block.cs" />
-    <Compile Include="BlockChain\BlockHeader.cs" />
+    <Compile Include="BlockChain\Primitives\Block.cs" />
+    <Compile Include="BlockChain\Primitives\BlockHeader.cs" />
     <Compile Include="BlockChain\CoinAddress.cs" />
     <Compile Include="BlockChain\COutPoint.cs" />
     <Compile Include="BlockChain\CTxIn.cs" />
     <Compile Include="BlockChain\CTxOut.cs" />
     <Compile Include="BlockChain\Objective.cs" />
     <Compile Include="BlockChain\MerkleBlock.cs" />
+    <Compile Include="BlockChain\Protocol\CScript.cs" />
+    <Compile Include="BlockChain\Protocol\CScriptNum.cs" />
+    <Compile Include="BlockChain\Protocol\ProtocolEnums.cs" />
+    <Compile Include="BlockChain\Protocol\ProtocolVersion.cs" />
+    <Compile Include="BlockChain\Protocol\TxOption.cs" />
     <Compile Include="BlockChain\Transaction.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Coin\Consensus.cs" />
     <Compile Include="Interfaces\ICoinSerializable.cs" />
     <Compile Include="Network\NetUtils.cs" />
     <Compile Include="Util\Encoders\ASCIIEncoder.cs" />
+    <Compile Include="Util\Encoders\Base58Encoder.cs" />
     <Compile Include="Util\Encoders\Base64Encoder.cs" />
     <Compile Include="Util\Encoders\DataEncoders.cs" />
     <Compile Include="Util\Encoders\HexEncoder.cs" />

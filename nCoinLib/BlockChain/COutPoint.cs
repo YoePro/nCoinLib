@@ -1,17 +1,21 @@
 ﻿using nCoinLib.Util.Types;
+using nCoinLib.Interfaces;
 using System;
+using nCoinLib.Util.Streams;
 
 namespace nCoinLib.BlockChain
 {
-    public class COutPoint
+    public class COutPoint : ICoinSerializable
     {
-        public UInt256 hash;
-        UInt32 n;
+        UInt256 _h;
+        UInt32 _n;
+
+        #region Constructors
 
         public COutPoint(UInt256 hashIn, UInt32 nIn)
         {
-            this.hash = hashIn;
-            this.n = nIn;
+            _h = hashIn;
+            _n = nIn;
         }
 
         public COutPoint()
@@ -19,56 +23,52 @@ namespace nCoinLib.BlockChain
             SetNull();
         }
 
+        public COutPoint(UInt256 hashIn, int nIn)
+        {
+            _h = hashIn;
+            _n = (nIn == -1) ? uint.MaxValue : (UInt32)nIn;
+        }
+
+        public COutPoint(Transaction tx, uint i)
+            : this(tx.GetHash(), i)
+        {
+        }
+
+        public COutPoint(Transaction tx, int i)
+            : this(tx.GetHash(), i)
+        {
+        }
+
+        public COutPoint(COutPoint outpoint)
+        {
+            this.FromBytes(outpoint.ToBytes());
+        }
+
+
+        #endregion
+
+        #region Properties
+
+        public UInt256 hash { get { return _h; } set { _h = value; } }
+        public UInt32 n { get { return _n; } set { _n = value; } }
+
+        public bool IsNull
+        {
+            get { return (hash == UInt256.Zero && n == UInt32.MaxValue); }
+        }
+        #endregion
+
         //TODO: Finish COutPoint
 
         //    ADD_SERIALIZE_METHODS;
 
-        //template<typename Stream, typename Operation>
-        //inline void SerializationOp(Stream& s, Operation ser_action)
-        //    {
-        //        READWRITE(hash);
-        //        READWRITE(n);
-        //    }
+        #region Methods
 
         public void SetNull()
         {
             hash = new UInt256();
             n = 0xFFFFFFFF;
         }
-
-        public bool IsNull
-        {
-            get { return (hash == UInt256.Zero && n == UInt32.MaxValue); }
-        }
-
-
-        #region Operators
-
-
-        public static bool operator <(COutPoint a, COutPoint b)
-        {
-
-            int cmp = a.hash.Compare(b.hash);
-            return cmp < 0 || (cmp == 0 && a.n < b.n);
-        }
-
-        public static bool operator >(COutPoint a, COutPoint b)
-        {
-            int cmp = a.hash.Compare(b.hash);
-            return cmp < 0 || (cmp == 0 && a.n > b.n);
-        }
-
-        public static bool operator ==(COutPoint a, COutPoint b)
-        {
-            return (a.hash == b.hash && a.n == b.n);
-        }
-
-        public static bool operator !=(COutPoint a, COutPoint b)
-        {
-            return !(a == b);
-        }
-
-        #endregion
 
         public override int GetHashCode()
         {
@@ -95,6 +95,54 @@ namespace nCoinLib.BlockChain
         {
             return string.Format("COutPoint({0}, {1})", hash.ToString().Substring(0, 10), n);
         }
+
+
+        #region ICoinSerializable Implementation
+
+        //template<typename Stream, typename Operation>
+        //inline void SerializationOp(Stream& s, Operation ser_action)
+        //    {
+        //        READWRITE(hash);
+        //        READWRITE(n);
+        //    }
+        public void ReadWrite(CoinStream stream)
+        {
+            stream.ReadWrite(ref _h);
+            stream.ReadWrite(ref _n);
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Operators
+        
+        public static bool operator <(COutPoint a, COutPoint b)
+        {
+
+            int cmp = a.hash.Compare(b.hash);
+            return cmp < 0 || (cmp == 0 && a.n < b.n);
+        }
+
+        public static bool operator >(COutPoint a, COutPoint b)
+        {
+            int cmp = a.hash.Compare(b.hash);
+            return cmp < 0 || (cmp == 0 && a.n > b.n);
+        }
+
+        public static bool operator ==(COutPoint a, COutPoint b)
+        {
+            return (a.hash == b.hash && a.n == b.n);
+        }
+
+        public static bool operator !=(COutPoint a, COutPoint b)
+        {
+            return !(a == b);
+        }
+
+        #endregion
+
 
     }
 }

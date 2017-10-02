@@ -1,4 +1,5 @@
-﻿using nCoinLib.Util.Streams;
+﻿using nCoinLib.BlockChain.Protocol;
+using nCoinLib.Util.Streams;
 using System;
 using System.IO;
 
@@ -9,7 +10,7 @@ namespace nCoinLib.Interfaces
         void ReadWrite(CoinStream stream);
     }
 
-    public static class BitcoinSerializableExtensions
+    public static class CoinSerializableExtensions
     {
         public static void ReadWrite(this ICoinSerializable serializable, Stream stream, bool serializing, ProtocolVersion version = ProtocolVersion.PROTOCOL_VERSION)
         {
@@ -26,7 +27,7 @@ namespace nCoinLib.Interfaces
             s.ReadWrite(serializable);
             return (int)s.Counter.WrittenBytes;
         }
-        public static int GetSerializedSize(this ICoinSerializable serializable, TransactionOptions options)
+        public static int GetSerializedSize(this ICoinSerializable serializable, TxOptions options)
         {
             var bms = new CoinStream(Stream.Null, true);
             bms.TransactionOptions = options;

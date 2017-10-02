@@ -1,4 +1,5 @@
-﻿using nCoinLib.Interfaces;
+﻿using nCoinLib.BlockChain.Protocol;
+using nCoinLib.Interfaces;
 using nCoinLib.Util.Types;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace nCoinLib.Util.Streams
         private readonly bool _Serializing;
         private PerformanceCounter _Counter;
         ProtocolVersion _ProtocolVersion = ProtocolVersion.PROTOCOL_VERSION;
-        TransactionOptions _TransactionSupportedOptions = TransactionOptions.All;
+        TxOptions _TransactionSupportedOptions = TransactionOptions.All;
 
         #endregion
 

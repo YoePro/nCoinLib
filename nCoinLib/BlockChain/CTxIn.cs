@@ -1,4 +1,6 @@
-﻿using nCoinLib.Util.Types;
+﻿using nCoinLib.Interfaces;
+using nCoinLib.Util.Streams;
+using nCoinLib.Util.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +13,14 @@ using System.Text;
 
 namespace nCoinLib.BlockChain
 {
-    class CTxIn
+    class CTxIn : ICoinSerializable
     {
+        #region Fields and Consts
 
-
-        public COutPoint prevout;
-        CScript scriptSig;
-        public UInt32 nSequence;
+        public COutPoint _prevout;
+        CScript _scriptSig;
+        public UInt32 _nSequence;
+        WitScript witScript = WitScript.Empty;
 
         //CScriptWitness scriptWitness; //! Only serialized through CTransaction
 
@@ -48,13 +51,90 @@ namespace nCoinLib.BlockChain
          * 9 bits. */
         static readonly int SEQUENCE_LOCKTIME_GRANULARITY = 9;
 
+        #endregion
+
+        #region Contructors
+
         CTxIn()
         {
             nSequence = SEQUENCE_FINAL;
         }
 
-        //    ADD_SERIALIZE_METHODS;
+        //    explicit CTxIn(COutPoint prevoutIn, CScript scriptSigIn = CScript(), uint32_t nSequenceIn = SEQUENCE_FINAL);
+        CTxIn(COutPoint prevoutIn, CScript scriptSigIn, UInt32 nSequenceIn)
+        {
+            prevout = prevoutIn;
+            scriptSig = scriptSigIn;
+            nSequence = nSequenceIn;
+        }
 
+        //    CTxIn(uint256 hashPrevTx, uint32_t nOut, CScript scriptSigIn = CScript(), uint32_t nSequenceIn = SEQUENCE_FINAL);
+        CTxIn(UInt256 hashPrevTx, UInt32 nOut, CScript scriptSigIn, UInt32 nSequenceIn)
+        {
+            prevout = new COutPoint(hashPrevTx, nOut);
+            scriptSig = scriptSigIn;
+            nSequence = nSequenceIn;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public COutPoint prevout { get { return _prevout; } set { _prevout = value; } }
+        public CScript scriptSig { get { return _scriptSig; } set { _scriptSig = value; } }
+        public UInt32 nSequence { get { return _nSequence; } set { _nSequence = value; } }
+
+        #endregion
+
+
+       #region Methods
+
+
+
+        public override string ToString()
+        {
+            string str = "CTxIn(";
+            str += prevout.ToString();
+            if (prevout.IsNull)
+                str += string.Format(", coinbase %s", HexStr(scriptSig));
+            else
+                str += string.Format(", scriptSig=%s", HexStr(scriptSig).substr(0, 24));
+            if (nSequence != SEQUENCE_FINAL)
+                str += string.Format(", nSequence=%u", nSequence);
+            str += ")";
+            return str;
+        }
+
+        public bool IsFrom(PubKey pubKey)
+        {
+            var result = PayToPubkeyHashTemplate.Instance.ExtractScriptSigParameters(scriptSig);
+            return result != null && result.PublicKey == pubKey;
+        }
+
+        public bool IsFinal
+        {
+            get
+            {
+                return (nSequence == uint.MaxValue);
+            }
+        }
+
+        public CTxIn Clone()
+        {
+            var txin = CoinSerializableExtensions.Clone(this);
+            txin.WitScript = (witScript ?? WitScript.Empty).Clone();
+            return txin;
+        }
+
+        public static CTxIn CreateCoinbase(int height)
+        {
+            var txin = new CTxIn();
+            txin.ScriptSig = new CScript(Op.GetPushOp(height)) + OpcodeType.OP_0;
+            return txin;
+        }
+
+
+        #region ICoinSerializable implementations
         //template<typename Stream, typename Operation>
         //inline void SerializationOp(Stream& s, Operation ser_action)
         //    {
@@ -62,6 +142,17 @@ namespace nCoinLib.BlockChain
         //        READWRITE(scriptSig);
         //        READWRITE(nSequence);
         //    }
+
+        public void ReadWrite(CoinStream stream)
+        {
+            stream.ReadWrite(ref _prevout);
+            stream.ReadWrite(ref _scriptSig);
+            stream.ReadWrite(ref _nSequence);
+        }
+
+        #endregion
+
+        #endregion
 
         #region Operators
 
@@ -80,39 +171,6 @@ namespace nCoinLib.BlockChain
 
 
         #endregion
-
-
-        //    explicit CTxIn(COutPoint prevoutIn, CScript scriptSigIn = CScript(), uint32_t nSequenceIn = SEQUENCE_FINAL);
-        CTxIn(COutPoint prevoutIn, CScript scriptSigIn, UInt32 nSequenceIn)
-        {
-            prevout = prevoutIn;
-            scriptSig = scriptSigIn;
-            nSequence = nSequenceIn;
-        }
-
-        //    CTxIn(uint256 hashPrevTx, uint32_t nOut, CScript scriptSigIn = CScript(), uint32_t nSequenceIn = SEQUENCE_FINAL);
-        CTxIn(UInt256 hashPrevTx, UInt32 nOut, CScript scriptSigIn, UInt32 nSequenceIn)
-        {
-            prevout = new COutPoint(hashPrevTx, nOut);
-            scriptSig = scriptSigIn;
-            nSequence = nSequenceIn;
-        }
-
-        public override string ToString()
-        {
-            string str = "CTxIn(";
-            str += prevout.ToString();
-            if (prevout.IsNull)
-                str += string.Format(", coinbase %s", HexStr(scriptSig));
-            else
-                str += string.Format(", scriptSig=%s", HexStr(scriptSig).substr(0, 24));
-            if (nSequence != SEQUENCE_FINAL)
-                str += string.Format(", nSequence=%u", nSequence);
-            str += ")";
-            return str;
-        }
-
-
 
     }
 }
